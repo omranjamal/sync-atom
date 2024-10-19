@@ -1,13 +1,13 @@
-![npm](https://img.shields.io/npm/v/sync-atom)
-![NPM](https://img.shields.io/npm/l/sync-atom)
-![GitHub issues](https://img.shields.io/github/issues/omranjamal/sync-atom)
-![npm bundle size](https://img.shields.io/bundlephobia/min/sync-atom)
-![npm](https://img.shields.io/npm/dw/sync-atom)
-![GitHub forks](https://img.shields.io/github/forks/omranjamal/sync-atom)
-![GitHub Repo stars](https://img.shields.io/github/stars/omranjamal/sync-atom)
+![npm](https://img.shields.io/npm/v/synchronization-atom)
+![NPM](https://img.shields.io/npm/l/synchronization-atom)
+![GitHub issues](https://img.shields.io/github/issues/omranjamal/synchronization-atom)
+![npm bundle size](https://img.shields.io/bundlephobia/min/synchronization-atom)
+![npm](https://img.shields.io/npm/dw/synchronization-atom)
+![GitHub forks](https://img.shields.io/github/forks/omranjamal/synchronization-atom)
+![GitHub Repo stars](https://img.shields.io/github/stars/omranjamal/synchronization-atom)
 
 
-# sync-atom
+# synchronization-atom
 
 > A powerful (& typed) zero-dependency primitive to help build other synchronization primitives including but not limited to:
 > [locks][1],
@@ -20,7 +20,7 @@
 
 ```bash
 # pnpm
-pnpm add --save sync-atom
+pnpm add --save synchronization-atom
 ```
 
 ## API
@@ -54,7 +54,7 @@ typeof predicate = (state: T) => boolean
 ### Make a [lock][1]
 
 ```ts
-import {atom} from 'sync-atom';
+import {atom} from 'synchronization-atom';
 
 const lockAtom = atom(false /* is locked */);
 
@@ -79,7 +79,7 @@ Promise.all([test(1), test(2), test(3)]);
 ### Make a [semaphore][2]
 
 ```ts
-import { atom } from 'sync-atom';
+import { atom } from 'synchronization-atom';
 
 const semaphoreAtom = atom(3 /* no. of seats */);
 
