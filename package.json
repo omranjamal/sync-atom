@@ -1,0 +1,45 @@
+{
+  "name": "sync-atom",
+  "version": "0.0.1",
+  "description": "A powerful (& typed) zero-dependency primitive to help build other synchronization primitives like locks, semaphores, events, or barriers",
+  "keywords": [
+    "sync",
+    "synchronization",
+    "lock",
+    "mutex",
+    "semaphore",
+    "barrier",
+    "event",
+    "atomic",
+    "primitive"
+  ],
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "author": {
+    "name": "Omran Jamal",
+    "email": "omran@omranjamal.me",
+    "url": "https://omranjamal.me"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w",
+    "test": "mocha -r ts-node/register tests/**/*.test.mts"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "20.5.0",
+    "chai": "^4.3.7",
+    "concurrently": "^8.0.1",
+    "mocha": "^10.2.0",
+    "nodemon": "^2.0.22",
+    "prettier": "^3.0.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.5.4"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omranjamal/scope-utilities.git"
+  }
+}
