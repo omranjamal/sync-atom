@@ -1,6 +1,6 @@
 {
   "name": "synchronization-atom",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A powerful (& typed) zero-dependency primitive to help build other synchronization primitives like locks, semaphores, events, or barriers",
   "keywords": [
     "sync",

@@ -138,7 +138,7 @@ async function test(n: number) {
     );
 
     console.log(n, `waiting for seats to fill`);
-    await barrierAtom.waitFor((emptySeats) => emptySeats === 0);
+    await barrierAtom.waitFor((emptySeats) => emptySeats < 0);
 
     console.log(n, `running`);
 }
