@@ -1,3 +1,9 @@
+export class AbortError extends Error {
+  constructor(public reason: any) {
+    super();
+  }
+}
+
 export function atom<T>(initialState: T) {
   let state = initialState;
 
@@ -7,6 +13,7 @@ export function atom<T>(initialState: T) {
   function conditionallyUpdate(
     predicate: (state: T) => boolean,
     nextState: T | ((state: T) => T),
+    abortController?: AbortController,
   ): Promise<T> {
     function attemptToApplyUptoOnePendingUpdate() {
       for (const [predicate, update] of pendingUpdates) {
@@ -34,13 +41,21 @@ export function atom<T>(initialState: T) {
         state = nextState;
       }
 
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         resolve(state);
+
         attemptToApplyUptoOnePendingUpdate();
         attemptToUnblockWaitingThreads();
       });
     } else {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
+        if (abortController) {
+          abortController.signal.addEventListener('abort', () => {
+            pendingUpdates.delete(predicate);
+            reject(new AbortError(abortController.signal.reason));
+          });
+        }
+
         pendingUpdates.set(predicate, () => {
           if (nextState instanceof Function) {
             state = nextState(state);
@@ -49,6 +64,7 @@ export function atom<T>(initialState: T) {
           }
 
           resolve(state);
+
           attemptToApplyUptoOnePendingUpdate();
           attemptToUnblockWaitingThreads();
         });
@@ -59,23 +75,38 @@ export function atom<T>(initialState: T) {
   function waitFor(
     predicate: (state: T) => boolean,
     reaction: (state: T) => void,
+    abortController?: AbortController,
   ): void;
-  function waitFor(predicate: (state: T) => boolean): Promise<T>;
+  function waitFor(predicate: (state: T) => boolean, reaction: undefined, abortController?: AbortController): Promise<T>;
   function waitFor(
     predicate: (state: T) => boolean,
     reaction?: (state: T) => void,
+    abortController?: AbortController,
   ): any {
     if (reaction) {
       if (predicate(state)) {
         reaction(state);
       } else {
+        if (abortController) {
+          abortController.signal.addEventListener('abort', () => {
+            blocked.delete(predicate);
+          });
+        }
+
         blocked.set(predicate, (state: T) => reaction(state));
       }
     } else {
       if (predicate(state)) {
         return Promise.resolve(state);
       } else {
-        return new Promise<T>((resolve) => {
+        return new Promise<T>((resolve, reject) => {
+          if (abortController) {
+            abortController.signal.addEventListener('abort', () => {
+              blocked.delete(predicate);
+              reject(new AbortError(abortController.signal.reason));
+            });
+          }
+
           blocked.set(predicate, (state: T) => resolve(state));
         });
       }

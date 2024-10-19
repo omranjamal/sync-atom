@@ -29,24 +29,32 @@ pnpm add --save synchronization-atom
 
 Creates and returns an `Atom<T>` with the given `initialState: T`.
 
-### `atom.conditionallyUpdate(predicate, nextState)`
+### `async atom.conditionallyUpdate(predicate, nextState, abortController?)`
 
-Attemts to update the atom's state to `nextState` if the 
+Attempts to update the atom's state to `nextState` if the 
 current state satisfies the `predicate`. If the current state
 does not satisfy the `predicate`, the call blocks until the
 predicate is satisfied.
+
+Can be cancelled via an optional `AbortController` as last argument.
 
 ```ts
 typeof predicate = (state: T) => boolean
 typeof nextState = T | ((state: T) => T)
 ```
 
-### `atom.waitFor(predicate)`
+### `async atom.waitFor(predicate, reaction?, abortController?)`
 
-Blocks until the atom's state satisfies the `predicate`.
+Blocks until the atom's state satisfies the `predicate` unless a
+`reaction` is provided. If a `reaction` is provided, the call returns
+immediately,  and when the `predicate` is satisfied, the `reaction`
+is executed.
+
+Can be cancelled via an optional `AbortController` as last argument.
 
 ```ts
 typeof predicate = (state: T) => boolean
+typeof reaction = Function
 ```
 
 ## Usage Examples
