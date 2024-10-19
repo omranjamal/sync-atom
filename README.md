@@ -107,6 +107,8 @@ Promise.all([test(1), test(2), test(3), test(4), test(5)]);
 ### Make a [event][3]
 
 ```ts
+import { atom } from 'synchronization-atom';
+
 const eventAtom = atom(false /* is event set */);
 
 async function test(n: number) {
@@ -125,6 +127,8 @@ eventAtom.conditionallyUpdate(() => true, true);
 ### Make a [barrier][4]
 
 ```ts
+import { atom } from 'synchronization-atom';
+
 const barrierAtom = atom(3 /* empty seats */);
 
 async function test(n: number) {
