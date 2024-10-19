@@ -113,5 +113,9 @@ export function atom<T>(initialState: T) {
     }
   }
 
-  return { conditionallyUpdate, waitFor };
+  function getState() {
+    return state;
+  }
+
+  return { conditionallyUpdate, waitFor, getState };
 }
