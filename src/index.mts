@@ -75,9 +75,14 @@ export function atom<T>(initialState: T) {
   function waitFor(
     predicate: (state: T) => boolean,
     reaction: (state: T) => void,
-    abortController?: AbortController,
   ): void;
-  function waitFor(predicate: (state: T) => boolean, reaction: undefined, abortController?: AbortController): Promise<T>;
+  function waitFor(
+    predicate: (state: T) => boolean,
+    reaction: (state: T) => void,
+    abortController: AbortController,
+  ): void;
+  function waitFor(predicate: (state: T) => boolean): Promise<T>;
+  function waitFor(predicate: (state: T) => boolean, reaction: undefined, abortController: AbortController): Promise<T>;
   function waitFor(
     predicate: (state: T) => boolean,
     reaction?: (state: T) => void,
