@@ -43,6 +43,7 @@ interface Atom<T> {
     conditionallyUpdate: (
         predicate: (state: T) => boolean,
         nextState: T | ((state: T) => T),
+        sideEffect?: ((state: T) => void) | ((state: T) => Promise<void>),
         abortController?: AbortController
     ) => Promise<T>
     ...
@@ -50,10 +51,13 @@ interface Atom<T> {
 ```
 
 - Updates the atom's state to `nextState` if the 
-current state satisfies the `predicate`.
+  current state satisfies the `predicate`.
 - If the current state
-does not satisfy the `predicate`, the call blocks until the
-predicate is satisfied. 
+  does not satisfy the `predicate`, the call blocks until the
+  predicate is satisfied.
+- If a `sideEffect` is provided, it is executed atomically 
+  as part of the update (i.e. no other update or side-effect will be running 
+  simultaneously against the atom).
 - Can be cancelled via an optional `AbortController` as last argument.
 
 ### `async` `atom.waitFor`
@@ -77,7 +81,7 @@ immediately,  and when the `predicate` is satisfied, the `reaction`
 is executed.
 - Can be cancelled via an optional `AbortController` as last argument.
 
-### `atom.get`
+### `atom.getState`
 
 ```ts
 interface Atom<T> {

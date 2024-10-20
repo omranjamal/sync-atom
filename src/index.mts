@@ -13,6 +13,7 @@ export function atom<T>(initialState: T) {
   function conditionallyUpdate(
     predicate: (state: T) => boolean,
     nextState: T | ((state: T) => T),
+    sideEffect?: ((state: T) => void) | ((state: T) => Promise<void>),
     abortController?: AbortController,
   ): Promise<T> {
     function attemptToApplyUptoOnePendingUpdate() {
@@ -41,11 +42,20 @@ export function atom<T>(initialState: T) {
         state = nextState;
       }
 
-      return new Promise((resolve, reject) => {
-        resolve(state);
+      const sideEffectResult = sideEffect?.(state);
 
-        attemptToApplyUptoOnePendingUpdate();
-        attemptToUnblockWaitingThreads();
+      return new Promise((resolve, reject) => {
+        if (sideEffectResult) {
+            sideEffectResult.then(() => {
+              resolve(state);
+              attemptToApplyUptoOnePendingUpdate();
+              attemptToUnblockWaitingThreads();
+            }).catch(reject);
+        } else {
+          resolve(state);
+          attemptToApplyUptoOnePendingUpdate();
+          attemptToUnblockWaitingThreads();
+        }
       });
     } else {
       return new Promise((resolve, reject) => {
@@ -63,10 +73,19 @@ export function atom<T>(initialState: T) {
             state = nextState;
           }
 
-          resolve(state);
+          const sideEffectResult = sideEffect?.(state);
 
-          attemptToApplyUptoOnePendingUpdate();
-          attemptToUnblockWaitingThreads();
+          if (sideEffectResult) {
+            sideEffectResult.then(() => {
+              resolve(state);
+              attemptToApplyUptoOnePendingUpdate();
+              attemptToUnblockWaitingThreads();
+            }).catch(reject);
+          } else {
+            resolve(state);
+            attemptToApplyUptoOnePendingUpdate();
+            attemptToUnblockWaitingThreads();
+          }
         });
       });
     }
