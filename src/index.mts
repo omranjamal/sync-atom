@@ -42,20 +42,12 @@ export function atom<T>(initialState: T) {
         state = nextState;
       }
 
-      const sideEffectResult = sideEffect?.(state);
+      sideEffect?.(state);
 
       return new Promise((resolve, reject) => {
-        if (sideEffectResult) {
-            sideEffectResult.then(() => {
-              resolve(state);
-              attemptToApplyUptoOnePendingUpdate();
-              attemptToUnblockWaitingThreads();
-            }).catch(reject);
-        } else {
-          resolve(state);
-          attemptToApplyUptoOnePendingUpdate();
-          attemptToUnblockWaitingThreads();
-        }
+        resolve(state);
+        attemptToApplyUptoOnePendingUpdate();
+        attemptToUnblockWaitingThreads();
       });
     } else {
       return new Promise((resolve, reject) => {
@@ -73,19 +65,11 @@ export function atom<T>(initialState: T) {
             state = nextState;
           }
 
-          const sideEffectResult = sideEffect?.(state);
+          sideEffect?.(state);
 
-          if (sideEffectResult) {
-            sideEffectResult.then(() => {
-              resolve(state);
-              attemptToApplyUptoOnePendingUpdate();
-              attemptToUnblockWaitingThreads();
-            }).catch(reject);
-          } else {
-            resolve(state);
-            attemptToApplyUptoOnePendingUpdate();
-            attemptToUnblockWaitingThreads();
-          }
+          resolve(state);
+          attemptToApplyUptoOnePendingUpdate();
+          attemptToUnblockWaitingThreads();
         });
       });
     }

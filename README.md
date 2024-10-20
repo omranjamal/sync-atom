@@ -43,7 +43,7 @@ interface Atom<T> {
     conditionallyUpdate: (
         predicate: (state: T) => boolean,
         nextState: T | ((state: T) => T),
-        sideEffect?: ((state: T) => void) | ((state: T) => Promise<void>),
+        sideEffect?: (state: T) => void,
         abortController?: AbortController
     ) => Promise<T>
     ...
