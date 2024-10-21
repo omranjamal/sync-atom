@@ -44,7 +44,7 @@ interface Atom<T> {
         predicate: (state: T) => boolean,
         nextState: T | ((state: T) => T),
         sideEffect?: (state: T) => void,
-        abortController?: AbortController
+        abortSignal?: AbortSignal
     ) => Promise<T>
     ...
 }
@@ -58,7 +58,7 @@ interface Atom<T> {
 - If a `sideEffect` is provided, it is executed atomically 
   as part of the update (i.e. no other update or side-effect will be running 
   simultaneously against the atom).
-- Can be cancelled via an optional `AbortController` as last argument.
+- Can be cancelled via an optional `AbortSignal` as last argument.
 
 ### `async` `atom.waitFor`
 
@@ -68,7 +68,7 @@ interface Atom<T> {
     waitFor: (
         predicate: (state: T) => boolean,
         reaction?: (state: T) => void,
-        abortController?: AbortController
+        abortSignal?: AbortSignal
     ) => Promise<T> | void
     ...
 }
@@ -79,7 +79,7 @@ interface Atom<T> {
 - If a `reaction` is provided, the call returns
 immediately,  and when the `predicate` is satisfied, the `reaction`
 is executed.
-- Can be cancelled via an optional `AbortController` as last argument.
+- Can be cancelled via an optional `AbortSignal` as last argument.
 
 ### `atom.getState`
 

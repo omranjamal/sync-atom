@@ -14,7 +14,7 @@ export function atom<T>(initialState: T) {
     predicate: (state: T) => boolean,
     nextState: T | ((state: T) => T),
     sideEffect?: ((state: T) => void) | ((state: T) => Promise<void>),
-    abortController?: AbortController,
+    abortSignal?: AbortSignal,
   ): Promise<T> {
     function attemptToApplyUptoOnePendingUpdate() {
       for (const [predicate, update] of pendingUpdates) {
@@ -51,10 +51,10 @@ export function atom<T>(initialState: T) {
       });
     } else {
       return new Promise((resolve, reject) => {
-        if (abortController) {
-          abortController.signal.addEventListener('abort', () => {
+        if (abortSignal) {
+          abortSignal.addEventListener('abort', () => {
             pendingUpdates.delete(predicate);
-            reject(new AbortError(abortController.signal.reason));
+            reject(new AbortError(abortSignal.reason));
           });
         }
 
@@ -82,21 +82,21 @@ export function atom<T>(initialState: T) {
   function waitFor(
     predicate: (state: T) => boolean,
     reaction: (state: T) => void,
-    abortController: AbortController,
+    abortSignal: AbortSignal,
   ): void;
   function waitFor(predicate: (state: T) => boolean): Promise<T>;
-  function waitFor(predicate: (state: T) => boolean, reaction: undefined, abortController: AbortController): Promise<T>;
+  function waitFor(predicate: (state: T) => boolean, reaction: undefined, abortSignal: AbortSignal): Promise<T>;
   function waitFor(
     predicate: (state: T) => boolean,
     reaction?: (state: T) => void,
-    abortController?: AbortController,
+    abortSignal?: AbortSignal,
   ): any {
     if (reaction) {
       if (predicate(state)) {
         reaction(state);
       } else {
-        if (abortController) {
-          abortController.signal.addEventListener('abort', () => {
+        if (abortSignal) {
+          abortSignal.addEventListener('abort', () => {
             blocked.delete(predicate);
           });
         }
@@ -108,10 +108,10 @@ export function atom<T>(initialState: T) {
         return Promise.resolve(state);
       } else {
         return new Promise<T>((resolve, reject) => {
-          if (abortController) {
-            abortController.signal.addEventListener('abort', () => {
+          if (abortSignal) {
+            abortSignal.addEventListener('abort', () => {
               blocked.delete(predicate);
-              reject(new AbortError(abortController.signal.reason));
+              reject(new AbortError(abortSignal.reason));
             });
           }
 
